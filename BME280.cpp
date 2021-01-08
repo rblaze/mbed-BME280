@@ -116,6 +116,12 @@ BME280_INTF_RET_TYPE BME280::write(
 
 void BME280::delay_us(uint32_t period, void *) {
   auto delay = std::chrono::microseconds(period);
-  ThisThread::sleep_for(
-      std::chrono::duration_cast<Kernel::Clock::duration_u32>(delay));
+  auto u32delay =
+      std::chrono::duration_cast<Kernel::Clock::duration_u32>(delay);
+
+  if (u32delay < delay) {
+    u32delay = Kernel::Clock::duration_u32{1};
+  }
+
+  ThisThread::sleep_for(u32delay);
 }
