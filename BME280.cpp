@@ -8,9 +8,10 @@ BME280::BME280(I2C &i2c, int address) : i2c_{i2c}, addr_{address} {
   dev_.read = &BME280::read;
   dev_.write = &BME280::write;
   dev_.delay_us = &BME280::delay_us;
+}
 
-  auto ret = bme280_init(&dev_);
-  MBED_ASSERT(ret == 0);
+int BME280::init() {
+  return bme280_init(&dev_);
 }
 
 int BME280::set_config(BME280::Config config) {

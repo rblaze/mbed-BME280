@@ -7,6 +7,8 @@ class BME280 {
 public:
   BME280(I2C &i2c, int address);
 
+  int init();
+
   enum class Config { WEATHER_MONITORING, INDOOR_NAVIGATION };
   int set_config(Config);
 
