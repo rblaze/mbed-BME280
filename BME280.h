@@ -27,9 +27,9 @@ public:
   int set_sleep_mode();
 
   int update_data();
-  uint32_t pressure() { return data_.pressure; }
-  int32_t temperature() { return data_.temperature; }
-  uint32_t humidity() { return data_.humidity; }
+  uint32_t pressure() const { return data_.pressure; }
+  int32_t temperature() const { return data_.temperature; }
+  uint32_t humidity() const { return data_.humidity; }
 
 private:
   static BME280_INTF_RET_TYPE read(
