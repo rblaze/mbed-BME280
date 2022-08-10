@@ -10,7 +10,7 @@ class BME280 {
   int init();
 
   enum class Config { WEATHER_MONITORING, INDOOR_NAVIGATION };
-  int set_config(Config);
+  int setConfig(Config);
 
   enum class StandbyTime {
     MS_0_5,
@@ -22,23 +22,23 @@ class BME280 {
     MS_500,
     MS_1000
   };
-  int set_normal_mode(StandbyTime);
-  int set_forced_mode();
-  int set_sleep_mode();
+  int setNormalMode(StandbyTime);
+  int setForcedMode();
+  int setSleepMode();
 
-  Kernel::Clock::duration_u32 get_update_delay() const;
-  int update_data();
+  Kernel::Clock::duration_u32 getUpdateDelay() const;
+  int updateData();
 
-  uint32_t pressure() const { return data_.pressure; }
-  int32_t temperature() const { return data_.temperature; }
-  uint32_t humidity() const { return data_.humidity; }
+  uint32_t getPressure() const { return data_.pressure; }
+  int32_t getTemperature() const { return data_.temperature; }
+  uint32_t getHumidity() const { return data_.humidity; }
 
  private:
   static BME280_INTF_RET_TYPE read(uint8_t reg_addr, uint8_t *reg_data,
                                    uint32_t len, void *intf_ptr);
   static BME280_INTF_RET_TYPE write(uint8_t reg_addr, const uint8_t *reg_data,
                                     uint32_t len, void *intf_ptr);
-  static void delay_us(uint32_t period, void *intf_ptr);
+  static void delayUs(uint32_t period, void *intf_ptr);
 
   I2C &i2c_;
   int addr_;

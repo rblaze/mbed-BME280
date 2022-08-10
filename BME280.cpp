@@ -7,12 +7,12 @@ BME280::BME280(I2C &i2c, int address) : i2c_{i2c}, addr_{address} {
   dev_.intf = BME280_I2C_INTF;
   dev_.read = &BME280::read;
   dev_.write = &BME280::write;
-  dev_.delay_us = &BME280::delay_us;
+  dev_.delay_us = &BME280::delayUs;
 }
 
 int BME280::init() { return bme280_init(&dev_); }
 
-int BME280::set_config(BME280::Config config) {
+int BME280::setConfig(BME280::Config config) {
   switch (config) {
     case Config::WEATHER_MONITORING:
       dev_.settings.osr_h = BME280_OVERSAMPLING_1X;
@@ -34,15 +34,15 @@ int BME280::set_config(BME280::Config config) {
   return bme280_set_sensor_settings(settings_sel, &dev_);
 }
 
-int BME280::set_sleep_mode() {
+int BME280::setSleepMode() {
   return bme280_set_sensor_mode(BME280_SLEEP_MODE, &dev_);
 }
 
-int BME280::set_forced_mode() {
+int BME280::setForcedMode() {
   return bme280_set_sensor_mode(BME280_FORCED_MODE, &dev_);
 }
 
-int BME280::set_normal_mode(BME280::StandbyTime standby) {
+int BME280::setNormalMode(BME280::StandbyTime standby) {
   switch (standby) {
     case StandbyTime::MS_0_5:
       dev_.settings.standby_time = BME280_STANDBY_TIME_0_5_MS;
@@ -78,13 +78,13 @@ int BME280::set_normal_mode(BME280::StandbyTime standby) {
   return ret;
 }
 
-Kernel::Clock::duration_u32 BME280::get_update_delay() const {
+Kernel::Clock::duration_u32 BME280::getUpdateDelay() const {
   uint32_t delay_ms = bme280_cal_meas_delay(&dev_.settings);
 
   return Kernel::Clock::duration_u32(delay_ms);
 }
 
-int BME280::update_data() {
+int BME280::updateData() {
   return bme280_get_sensor_data(BME280_ALL, &data_, &dev_);
 }
 
@@ -118,7 +118,8 @@ BME280_INTF_RET_TYPE BME280::write(uint8_t reg_addr, const uint8_t *reg_data,
   return res;
 }
 
-void BME280::delay_us(uint32_t period, void *) {
+void BME280::delayUs(uint32_t period, void *) {
+  // Driver only sleeps for 1ms or 2ms, use ThisThread::sleep_for()
   auto delay = std::chrono::microseconds(period);
   auto u32delay =
       std::chrono::duration_cast<Kernel::Clock::duration_u32>(delay);
