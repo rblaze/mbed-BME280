@@ -10,9 +10,7 @@ BME280::BME280(I2C &i2c, int address) : i2c_{i2c}, addr_{address} {
   dev_.delay_us = &BME280::delay_us;
 }
 
-int BME280::init() {
-  return bme280_init(&dev_);
-}
+int BME280::init() { return bme280_init(&dev_); }
 
 int BME280::set_config(BME280::Config config) {
   switch (config) {
@@ -80,12 +78,18 @@ int BME280::set_normal_mode(BME280::StandbyTime standby) {
   return ret;
 }
 
+Kernel::Clock::duration_u32 BME280::get_update_delay() const {
+  uint32_t delay_ms = bme280_cal_meas_delay(&dev_.settings);
+
+  return Kernel::Clock::duration_u32(delay_ms);
+}
+
 int BME280::update_data() {
   return bme280_get_sensor_data(BME280_ALL, &data_, &dev_);
 }
 
-BME280_INTF_RET_TYPE BME280::read(
-    uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *intf_ptr) {
+BME280_INTF_RET_TYPE BME280::read(uint8_t reg_addr, uint8_t *reg_data,
+                                  uint32_t len, void *intf_ptr) {
   auto owner = static_cast<BME280 *>(intf_ptr);
   auto reg = reinterpret_cast<const char *>(&reg_addr);
   auto data = reinterpret_cast<char *>(reg_data);
@@ -98,8 +102,8 @@ BME280_INTF_RET_TYPE BME280::read(
   return res;
 }
 
-BME280_INTF_RET_TYPE BME280::write(
-    uint8_t reg_addr, const uint8_t *reg_data, uint32_t len, void *intf_ptr) {
+BME280_INTF_RET_TYPE BME280::write(uint8_t reg_addr, const uint8_t *reg_data,
+                                   uint32_t len, void *intf_ptr) {
   auto owner = static_cast<BME280 *>(intf_ptr);
   auto reg = reinterpret_cast<const char *>(&reg_addr);
   auto data = reinterpret_cast<const char *>(reg_data);

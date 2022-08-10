@@ -4,7 +4,7 @@
 #include "bme280_defs.h"
 
 class BME280 {
-public:
+ public:
   BME280(I2C &i2c, int address);
 
   int init();
@@ -26,16 +26,18 @@ public:
   int set_forced_mode();
   int set_sleep_mode();
 
+  Kernel::Clock::duration_u32 get_update_delay() const;
   int update_data();
+
   uint32_t pressure() const { return data_.pressure; }
   int32_t temperature() const { return data_.temperature; }
   uint32_t humidity() const { return data_.humidity; }
 
-private:
-  static BME280_INTF_RET_TYPE read(
-      uint8_t reg_addr, uint8_t *reg_data, uint32_t len, void *intf_ptr);
-  static BME280_INTF_RET_TYPE write(
-      uint8_t reg_addr, const uint8_t *reg_data, uint32_t len, void *intf_ptr);
+ private:
+  static BME280_INTF_RET_TYPE read(uint8_t reg_addr, uint8_t *reg_data,
+                                   uint32_t len, void *intf_ptr);
+  static BME280_INTF_RET_TYPE write(uint8_t reg_addr, const uint8_t *reg_data,
+                                    uint32_t len, void *intf_ptr);
   static void delay_us(uint32_t period, void *intf_ptr);
 
   I2C &i2c_;
