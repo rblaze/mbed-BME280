@@ -1,6 +1,6 @@
 #include "BME280.h"
 
-#include "bme280.h"
+#include "bme280_driver.h"
 
 BME280::BME280(I2C &i2c, int address) : i2c_{i2c}, addr_{address} {
   dev_.intf_ptr = this;

@@ -7,6 +7,6 @@ target_include_directories(mbed-BME280
 
 target_sources(mbed-BME280
     INTERFACE
-        bme280.c
+        bme280_driver.c
         BME280.cpp
 )
