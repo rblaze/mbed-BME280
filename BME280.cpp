@@ -108,14 +108,19 @@ BME280_INTF_RET_TYPE BME280::write(uint8_t reg_addr, const uint8_t *reg_data,
   auto reg = reinterpret_cast<const char *>(&reg_addr);
   auto data = reinterpret_cast<const char *>(reg_data);
 
-  auto res = owner->i2c_.write(owner->addr_, reg, sizeof(reg_addr), true);
-  if (res != 0) {
-    owner->i2c_.stop();
-  } else {
-    res = owner->i2c_.write(owner->addr_, data, len);
+  owner->i2c_.start();
+  int res = owner->i2c_.write(owner->addr_);
+
+  if (res == 1) {
+    res = owner->i2c_.write(reg_addr);
   }
 
-  return res;
+  for (uint32_t i = 0; i < len && res == 1; i++) {
+    res = owner->i2c_.write(reg_data[i]);
+  }
+  owner->i2c_.stop();
+
+  return (res == 1 ? BME280_OK : 1);
 }
 
 void BME280::delayUs(uint32_t period, void *) {
